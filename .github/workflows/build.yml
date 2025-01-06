@@ -1,5 +1,19 @@
 # Inspired from https://github.com/actions/starter-workflows/blob/main/pages/nextjs.yml
-name: builld
+name: build code
+
+on:
+  pull_request:
+    branches: main
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
