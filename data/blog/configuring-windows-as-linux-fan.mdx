@@ -3,37 +3,79 @@ title: How I configure my winodows machine as a Linux die hard fan for my work
 date: '2024-03-08'
 tags: ['linux', 'windows', 'wsl', 'archlinux', 'tmux']
 summary: >
-  One thing about a job is that the employer chooose for you wich operating
-  system they want you to use during your commute and nine out of 10 is gonna
-  be microst windows. I fall on the majority of that stat :( with that I had
-  to do a lot of configuration to at least make windows usable for me and on
-  this blog I will outline all the configratiion I had to make, maybe you can
-  learn few
+    One thing about a job is that the employer chooses which operating system they
+    want you to use during your commute, and nine out of 10 times it's going to be
+    Microsoft Windows. I fall into the majority of that statistic :( With that, I
+    had to do a lot of configuration to at least make Windows usable for me. On this
+    blog, I will outline all the configurations I had to make. Maybe you can learn a
+    few things.
 ---
 
-It will be no supprice that you will need to install software when trying to
-repricate some of thiss configuration so make sure that you havee right to
-install software on your work computer or conviced the IT why you need that
-sofware lol.
+It will be no surprise that you will need to install software when trying to
+replicate some of this configuration, so make sure that you have the right to
+install software on your work computer or convince the IT department why you
+need that software.
 
-## Power Toy
+## PowerToys
 
-The first software that I wish it can come as default for window is power toys,
-It make it easy for you to set up key map but the most famouse importa feature
-is its (power run) think of dmenu or rofi from linux side I use it maily to open
-app and change the binding to Win+P. it can do math web search but as I mention
-my use of it its quite simple if you prepend the query with `.` it only search
-application that are installed on your computer
+The first software that I wish could come as default for Windows is [PowerToys](https://learn.microsoft.com/en-us/windows/powertoys/).
+It makes it easy for you to set up key mappings, but the most important and
+famous feature is Power Run. Think of dmenu or rofi from the Linux side. I
+mainly use it to open apps and change the binding to `Win+P`. It can also do math
+and web searches, but as I mentioned, my use of it is quite simple. If you
+prepend the query with a period, it only searches for applications that are
+installed on your computer.
 
-Cooking something amazing.
 
-## Inline Highlighting
+## Alacritty
+
+[Alacritty ](https://alacritty.org/) is better than [Windows terminal](https://learn.microsoft.com/en-us/windows/terminal/), I know some
+window fan boy will be mad at me but if you are comming from linux the is no
+better therminal in wondows than alacritty as of 2024. also the gosht terminal was just release at the end of 2024 but I haven't
+used it to say my opionion about it. beside the stardarad configruation that you
+can find on the allacrity docs, I had to add the folling
+
+```
+shell : blah blah
+```
+this is to make sure that when I launch alacritty it start a wsl arc sesion,
+more about that on the next
+
+
+## WSL 2
+
+https://github.com/yuk7/ArchWSL
+
+Okay, The best thing microsoft ever did is admiting that they have lost to
+linux in the debloper community and embend linux in their own operating system.
+so I will say this is a must if you are a developer working with windows. it
+give you an linux enviroment to work form, the most used one is ubuntu but as a
+linux die hard fan I am using arch linux, why? becasue is just better daar :)
+your can find the step to install arch linux on WSL 2 here
+
+The are few things to note when working with WSL, 
+
+### opening Windows application from WSL
+I was so 
 
 Sample of inline highlighting `sum = parseInt(num1) + parseInt(num2)`
 
-## Code Blocks
 
-Some Javascript code
+### Clipboard
+Having the yank clip board working whering it accross the system, I only got
+this working on neovim, 
+
+_search the thing I still that made this working_
+
+
+## Tmux
+
+Learn Tmux, it is just the best tool you can add to your development workflow
+
+
+### Windows Shortcut you need To Know
+
+
 
 ```javascript
 var num1, num2, sum
