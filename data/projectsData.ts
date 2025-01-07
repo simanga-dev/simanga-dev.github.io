@@ -19,8 +19,8 @@ the system`,
     description: `This projects show case a .net web application that I build
 where you can place orders of carpentry, it send you and email when the order
 it is receved when it is completed`,
-    imgSrc: '/static/images/time-machine.jpg',
-    href: '/blog/the-time-machine',
+    imgSrc: '/static/images/carpentry-shop.png',
+    href: 'https://carpentry.simanga.dev/',
   },
 ]
 
