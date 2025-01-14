@@ -3,12 +3,12 @@ title: How I configure my winodows machine as a Linux die hard fan for my work
 date: '2024-03-08'
 tags: ['linux', 'windows', 'wsl', 'archlinux', 'tmux']
 summary: >
-    One thing about a job is that the employer chooses which operating system they
-    want you to use during your commute, and nine out of 10 times it's going to be
-    Microsoft Windows. I fall into the majority of that statistic :( With that, I
-    had to do a lot of configuration to at least make Windows usable for me. On this
-    blog, I will outline all the configurations I had to make. Maybe you can learn a
-    few things.
+  One thing about a job is that the employer chooses which operating system they
+  want you to use during your commute, and nine out of 10 times it's going to be
+  Microsoft Windows. I fall into the majority of that statistic :( With that, I
+  had to do a lot of configuration to at least make Windows usable for me. On this
+  blog, I will outline all the configurations I had to make. Maybe you can learn a
+  few things.
 ---
 
 It will be no surprise that you will need to install software when trying to
@@ -26,7 +26,6 @@ and web searches, but as I mentioned, my use of it is quite simple. If you
 prepend the query with a period, it only searches for applications that are
 installed on your computer.
 
-
 ## Alacritty
 
 [Alacritty ](https://alacritty.org/) is better than [Windows terminal](https://learn.microsoft.com/en-us/windows/terminal/), I know some
@@ -35,65 +34,76 @@ better therminal in wondows than alacritty as of 2024. also the gosht terminal w
 used it to say my opionion about it. beside the stardarad configruation that you
 can find on the allacrity docs, I had to add the folling
 
+```bash
+
+[terminal.shell]
+program = "wsl.exe"
+args = ["--cd", "~"]
+
+---
+
+[window]
+# opacity = 0.95
+decorations = "None"
+
 ```
-shell : blah blah
-```
+
 this is to make sure that when I launch alacritty it start a wsl arc sesion,
 more about that on the next
-
 
 ## WSL 2
 
 https://github.com/yuk7/ArchWSL
+https://github.com/wslutilities/wslu?tab=readme-ov-file
 
-Okay, The best thing microsoft ever did is admiting that they have lost to
-linux in the debloper community and embend linux in their own operating system.
-so I will say this is a must if you are a developer working with windows. it
-give you an linux enviroment to work form, the most used one is ubuntu but as a
-linux die hard fan I am using arch linux, why? becasue is just better daar :)
-your can find the step to install arch linux on WSL 2 here
+Okay, the best thing Microsoft ever did was admitting that they have lost to
+Linux in the developer community and embedding Linux in their own operating
+system. So, I will say this is a must if you are a developer working with
+Windows. It gives you a Linux environment to work from. The most used one is
+Ubuntu, but as a Linux die-hard fan, I am using Arch Linux. Why? Because it is
+just better. You can find the steps to install Arch Linux on WSL 2 here.
 
-The are few things to note when working with WSL, 
+The are few things to note when working with WSL,
 
 ### opening Windows application from WSL
-I was so 
 
-Sample of inline highlighting `sum = parseInt(num1) + parseInt(num2)`
-
+When using WSL the are some times where you want to open file explore in the
+current folder or notepad. You can be able to do so by
+``explore.exe``or` notepad.exe ```. You can even take it futher and open
+execl files or getting enviroment using wslu wich is a bunch that improve the
+experience
 
 ### Clipboard
-Having the yank clip board working whering it accross the system, I only got
-this working on neovim, 
 
-_search the thing I still that made this working_
+I also have some trouble to share clipboard on my neovim config with the
+windows system but the following config help althour they reudce the perfomace
+of copying and pasting in neovim
 
+```lua
+-- init.lua
+if vim.fn.has 'wsl' == 1 then
+  vim.g.clipboard = {
+    name = 'WslClipboard',
+    copy = {
+      ['+'] = 'clip.exe',
+      ['*'] = 'clip.exe',
+    },
+    paste = {
+      ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+      ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    },
+    cache_enabled = 0,
+  }
+end
+
+```
 
 ## Tmux
 
-Learn Tmux, it is just the best tool you can add to your development workflow
-
+One of the took I use a lot is Tmux, Tmux is a litle bit complex but at its core
+is a terminal multiplex, short it make sure that when you close the terminal
+window the programe that were running continu to run in the back ground so that
+when you open the terminal you can continue where you left, which is a litle bit
+convinience,
 
 ### Windows Shortcut you need To Know
-
-
-
-```javascript
-var num1, num2, sum
-num1 = prompt('Enter first number')
-num2 = prompt('Enter second number')
-sum = parseInt(num1) + parseInt(num2) // "+" means "add"
-alert('Sum = ' + sum) // "+" means combine into a string
-```
-
-Some Python code 🐍
-
-```python
-def fib():
-    a, b = 0, 1
-    while True:            # First iteration:
-        yield a            # yield 0 to start with and then
-        a, b = b, a + b    # a will now be 1, and b will also be 1, (0 + 1)
-
-for index, fibonacci_number in zip(range(10), fib()):
-     print('{i:3}: {f:3}'.format(i=index, f=fibonacci_number))
-```
