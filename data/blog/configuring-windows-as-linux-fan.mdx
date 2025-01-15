@@ -1,5 +1,5 @@
 ---
-title: How I configure my winodows machine as a Linux die hard fan for my work
+title: "Embracing Linux on Windows: Configuring My Machine for Work"
 date: '2024-03-08'
 tags: ['linux', 'windows', 'wsl', 'archlinux', 'tmux']
 summary: >
@@ -11,36 +11,37 @@ summary: >
   few things.
 ---
 
-It will be no surprise that you will need to install software when trying to
-replicate some of this configuration, so make sure that you have the right to
+_It will be no surprise that you will need to install software when trying to
+replicate some of this configuration, make sure that you have the right to
 install software on your work computer or convince the IT department why you
-need that software.
+need that software_
 
 ## PowerToys
 
 The first software that I wish could come as default for Windows is [PowerToys](https://learn.microsoft.com/en-us/windows/powertoys/).
 It makes it easy for you to set up key mappings, but the most important and
-famous feature is Power Run. Think of dmenu or rofi from the Linux side. I
-mainly use it to open apps and change the binding to `Win+P`. It can also do math
-and web searches, but as I mentioned, my use of it is quite simple. If you
-prepend the query with a period, it only searches for applications that are
-installed on your computer.
+its famous feature is Power Run. Think of [dmenu ](https://tools.suckless.org/dmenu/) or [rofi ](https://github.com/davatorium/rofi) from the Linux side. I
+mainly use it to open apps and do math on the fly. I currently have it bind to `Win+P`.
+PowerToys can do more such as searching the web and search files but my use of
+it is pretty much basic.
 
 ## Alacritty
 
-[Alacritty ](https://alacritty.org/) is better than [Windows terminal](https://learn.microsoft.com/en-us/windows/terminal/), I know some
-window fan boy will be mad at me but if you are comming from linux the is no
-better therminal in wondows than alacritty as of 2024. also the gosht terminal was just release at the end of 2024 but I haven't
-used it to say my opionion about it. beside the stardarad configruation that you
-can find on the allacrity docs, I had to add the folling
+[Alacritty](https://alacritty.org/) is superior to [Windows terminal](https://learn.microsoft.com/en-us/windows/terminal/). I understand that some Windows
+enthusiasts may disagree with me, but for those transitioning from Linux, there
+is currently no better terminal option in Windows than **Alacritty** as of 2024.
+I know the Ghost Terminal was recently released at the end of 2024, but I
+have not yet had the opportunity to form an opinion on it. In addition to the
+standard configuration provided in the Alacritty documentation, I had to add the
+following:
 
 ```bash
+
+...
 
 [terminal.shell]
 program = "wsl.exe"
 args = ["--cd", "~"]
-
----
 
 [window]
 # opacity = 0.95
@@ -48,36 +49,46 @@ decorations = "None"
 
 ```
 
-this is to make sure that when I launch alacritty it start a wsl arc sesion,
-more about that on the next
+This is to ensure that when I launch Alacritty, it starts a WSL session.
+More about that later
 
 ## WSL 2
 
-https://github.com/yuk7/ArchWSL
-https://github.com/wslutilities/wslu?tab=readme-ov-file
+Okay, the best thing Microsoft ever did was admit that they have lost to Linux
+in the developer community and embed Linux in their own operating system. So, I
+will say this is a must if you are a developer working with Windows. It gives
+you a Linux environment to work from. The most used one is Ubuntu, but as a
+Linux die-hard fan, I am using Arch Linux. Why? Because it is simply better. You
+can find the steps to install Arch Linux on WSL 2 [here](https://github.com/yuk7/ArchWSL).
 
-Okay, the best thing Microsoft ever did was admitting that they have lost to
-Linux in the developer community and embedding Linux in their own operating
-system. So, I will say this is a must if you are a developer working with
-Windows. It gives you a Linux environment to work from. The most used one is
-Ubuntu, but as a Linux die-hard fan, I am using Arch Linux. Why? Because it is
-just better. You can find the steps to install Arch Linux on WSL 2 here.
+There are a few things to note when working with WSL.
 
-The are few things to note when working with WSL,
-
-### opening Windows application from WSL
+### Opening Windows application from WSL
 
 When using WSL the are some times where you want to open file explore in the
-current folder or notepad. You can be able to do so by
-``explore.exe``or` notepad.exe ```. You can even take it futher and open
-execl files or getting enviroment using wslu wich is a bunch that improve the
-experience
+current folder or notepad. You can be able to do so by running
+
+```bash
+explore.exe .
+```
+
+or
+
+```
+notepad.exe
+```
+
+You can even take it further and open Excel files or access the environment
+variables using [WSLU](https://github.com/wslutilities/wslu?tab=readme-ov-file), which is a tool that enhances the experience of WSL
+
+
 
 ### Clipboard
 
-I also have some trouble to share clipboard on my neovim config with the
-windows system but the following config help althour they reudce the perfomace
-of copying and pasting in neovim
+I also had some trouble sharing the clipboard on my [Neovim ](https://neovim.io/) with
+the Windows system. The following configuration helps, although it reduces the
+performance of copying and pasting in Neovim.
+
 
 ```lua
 -- init.lua
@@ -100,10 +111,101 @@ end
 
 ## Tmux
 
-One of the took I use a lot is Tmux, Tmux is a litle bit complex but at its core
-is a terminal multiplex, short it make sure that when you close the terminal
-window the programe that were running continu to run in the back ground so that
-when you open the terminal you can continue where you left, which is a litle bit
-convinience,
+One of the tools I use frequently is [Tmux](https://github.com/tmux/tmux/wiki). **Tmux** is a bit complex, but at its
+core, it is a terminal multiplexer. In short, it ensures that when you close the
+terminal window, the programs that were running continue to run in the
+background. This allows you to pick up where you left off when you reopen the
+terminal, which is convenient since you will likely be closing and opening the
+Alacritty terminal often.
 
-### Windows Shortcut you need To Know
+I have added this to a ```.zshrc``` file that allows me to automatically re-attach to
+a tmux session if it exists, or create one if it does not.
+
+```
+# Check if already in a tmux session
+if [ -n "$TMUX" ]; then
+    echo "Already in a tmux session"
+else
+    # Check if the tmux session named "default" already exists
+    if ! tmux has-session -t default 2>/dev/null; then
+        # If the session does not exist, create a new one
+        tmux new-session -s default -A
+    else
+        # If the session already exists, attach to it
+        tmux attach-session -t default
+    fi
+fi
+```
+
+## Windows shortcuts you need to know and window management.
+
+There are a few shortcuts that you need to know on Windows to make your life easier.
+
+- Closing / a Window ``` Alt+F4```
+- Maximize a current window ```Win+Up```
+
+With those two shorcut your configuration is almost complete since you can be
+able to open applications using PowerToys, maximize them, and close them
+without touching the mouse.
+
+With that being said, you can stop here and I think you will have a better setup
+on Windows. But if you want to take it further, carry on.
+
+One thing that I like about Linux is that there are many software options that
+allow you to customize key mappings. The first thing I usually change on a
+machine is to map the Caps Lock key to ESC. I have found that the software that
+works best on both Linux and Windows is [Kanata](https://github.com/jtroo/kanata). I have also used Kanata to set
+up my home row mods. Here is the full configuration for my Kanata software.
+
+
+```
+
+;; defsrc is still necessary
+
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+  caps a s d f h j k l ;
+  f5 , . spc p y
+)
+
+(defvar
+  tap-time 250
+  hold-time 250
+)
+
+(defalias
+  escctrl (tap-hold 150 200 esc (layer-toggle num) )
+  a (tap-hold $tap-time $hold-time a lmet)
+  s (tap-hold $tap-time $hold-time s lsft)
+  d (tap-hold $tap-time $hold-time d lalt)
+  f (tap-hold $tap-time $hold-time f lctl)
+
+  j (tap-hold $tap-time $hold-time j rctl)
+  k (tap-hold $tap-time $hold-time k ralt)
+  l (tap-hold $tap-time $hold-time l rsft)
+  ; (tap-hold $tap-time $hold-time ; rmet)
+  cpy S-C-c
+  pst S-ins
+  bak C-bspc
+)
+
+(deflayer base
+ @escctrl  @a @s @d @f h @j @k @l @;
+  lrld  , . spc p y
+)
+
+
+(deflayer num
+  esc @a @s @d @f @bak down up @l @;
+  f5 left rght rpt @pst @cpy
+)
+
+
+```
+
+I am aware this might be a little bit too much but honestly just read the [docs](https://github.com/jtroo/kanata/blob/main/docs/config.adoc)
+you will understand what is going on.
+
