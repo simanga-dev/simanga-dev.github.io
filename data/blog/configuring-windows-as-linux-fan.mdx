@@ -1,57 +1,211 @@
 ---
-title: How I configure my winodows machine as a Linux die hard fan for my work
+title: "Embracing Linux on Windows: Configuring My Machine for Work"
 date: '2024-03-08'
 tags: ['linux', 'windows', 'wsl', 'archlinux', 'tmux']
 summary: >
-  One thing about a job is that the employer chooose for you wich operating
-  system they want you to use during your commute and nine out of 10 is gonna
-  be microst windows. I fall on the majority of that stat :( with that I had
-  to do a lot of configuration to at least make windows usable for me and on
-  this blog I will outline all the configratiion I had to make, maybe you can
-  learn few
+  One thing about a job is that the employer chooses which operating system they
+  want you to use during your commute, and nine out of 10 times it's going to be
+  Microsoft Windows. I fall into the majority of that statistic :( With that, I
+  had to do a lot of configuration to at least make Windows usable for me. On this
+  blog, I will outline all the configurations I had to make. Maybe you can learn a
+  few things.
 ---
 
-It will be no supprice that you will need to install software when trying to
-repricate some of thiss configuration so make sure that you havee right to
-install software on your work computer or conviced the IT why you need that
-sofware lol.
+_It will be no surprise that you will need to install software when trying to
+replicate some of this configuration, make sure that you have the right to
+install software on your work computer or convince the IT department why you
+need that software_
 
-## Power Toy
+## PowerToys
 
-The first software that I wish it can come as default for window is power toys,
-It make it easy for you to set up key map but the most famouse importa feature
-is its (power run) think of dmenu or rofi from linux side I use it maily to open
-app and change the binding to Win+P. it can do math web search but as I mention
-my use of it its quite simple if you prepend the query with `.` it only search
-application that are installed on your computer
+The first software that I wish could come as default for Windows is [PowerToys](https://learn.microsoft.com/en-us/windows/powertoys/).
+It makes it easy for you to set up key mappings, but the most important and
+its famous feature is Power Run. Think of [dmenu ](https://tools.suckless.org/dmenu/) or [rofi ](https://github.com/davatorium/rofi) from the Linux side. I
+mainly use it to open apps and do math on the fly. I currently have it bind to `Win+P`.
+PowerToys can do more such as searching the web and search files but my use of
+it is pretty much basic.
 
-Cooking something amazing.
+## Alacritty
 
-## Inline Highlighting
+[Alacritty](https://alacritty.org/) is superior to [Windows terminal](https://learn.microsoft.com/en-us/windows/terminal/). I understand that some Windows
+enthusiasts may disagree with me, but for those transitioning from Linux, there
+is currently no better terminal option in Windows than **Alacritty** as of 2024.
+I know the Ghost Terminal was recently released at the end of 2024, but I
+have not yet had the opportunity to form an opinion on it. In addition to the
+standard configuration provided in the Alacritty documentation, I had to add the
+following:
 
-Sample of inline highlighting `sum = parseInt(num1) + parseInt(num2)`
+```bash
 
-## Code Blocks
+...
 
-Some Javascript code
+[terminal.shell]
+program = "wsl.exe"
+args = ["--cd", "~"]
 
-```javascript
-var num1, num2, sum
-num1 = prompt('Enter first number')
-num2 = prompt('Enter second number')
-sum = parseInt(num1) + parseInt(num2) // "+" means "add"
-alert('Sum = ' + sum) // "+" means combine into a string
+[window]
+# opacity = 0.95
+decorations = "None"
+
 ```
 
-Some Python code 🐍
+This is to ensure that when I launch Alacritty, it starts a WSL session.
+More about that later
 
-```python
-def fib():
-    a, b = 0, 1
-    while True:            # First iteration:
-        yield a            # yield 0 to start with and then
-        a, b = b, a + b    # a will now be 1, and b will also be 1, (0 + 1)
+## WSL 2
 
-for index, fibonacci_number in zip(range(10), fib()):
-     print('{i:3}: {f:3}'.format(i=index, f=fibonacci_number))
+Okay, the best thing Microsoft ever did was admit that they have lost to Linux
+in the developer community and embed Linux in their own operating system. So, I
+will say this is a must if you are a developer working with Windows. It gives
+you a Linux environment to work from. The most used one is Ubuntu, but as a
+Linux die-hard fan, I am using Arch Linux. Why? Because it is simply better. You
+can find the steps to install Arch Linux on WSL 2 [here](https://github.com/yuk7/ArchWSL).
+
+There are a few things to note when working with WSL.
+
+### Opening Windows application from WSL
+
+When using WSL the are some times where you want to open file explore in the
+current folder or notepad. You can be able to do so by running
+
+```bash
+explore.exe .
 ```
+
+or
+
+```
+notepad.exe
+```
+
+You can even take it further and open Excel files or access the environment
+variables using [WSLU](https://github.com/wslutilities/wslu?tab=readme-ov-file), which is a tool that enhances the experience of WSL
+
+
+
+### Clipboard
+
+I also had some trouble sharing the clipboard on my [Neovim ](https://neovim.io/) with
+the Windows system. The following configuration helps, although it reduces the
+performance of copying and pasting in Neovim.
+
+
+```lua
+-- init.lua
+if vim.fn.has 'wsl' == 1 then
+  vim.g.clipboard = {
+    name = 'WslClipboard',
+    copy = {
+      ['+'] = 'clip.exe',
+      ['*'] = 'clip.exe',
+    },
+    paste = {
+      ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+      ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    },
+    cache_enabled = 0,
+  }
+end
+
+```
+
+## Tmux
+
+One of the tools I use frequently is [Tmux](https://github.com/tmux/tmux/wiki). **Tmux** is a bit complex, but at its
+core, it is a terminal multiplexer. In short, it ensures that when you close the
+terminal window, the programs that were running continue to run in the
+background. This allows you to pick up where you left off when you reopen the
+terminal, which is convenient since you will likely be closing and opening the
+Alacritty terminal often.
+
+I have added this to a ```.zshrc``` file that allows me to automatically re-attach to
+a tmux session if it exists, or create one if it does not.
+
+```
+# Check if already in a tmux session
+if [ -n "$TMUX" ]; then
+    echo "Already in a tmux session"
+else
+    # Check if the tmux session named "default" already exists
+    if ! tmux has-session -t default 2>/dev/null; then
+        # If the session does not exist, create a new one
+        tmux new-session -s default -A
+    else
+        # If the session already exists, attach to it
+        tmux attach-session -t default
+    fi
+fi
+```
+
+## Windows shortcuts you need to know and window management.
+
+There are a few shortcuts that you need to know on Windows to make your life easier.
+
+- Closing / a Window ``` Alt+F4```
+- Maximize a current window ```Win+Up```
+
+With those two shorcut your configuration is almost complete since you can be
+able to open applications using PowerToys, maximize them, and close them
+without touching the mouse.
+
+With that being said, you can stop here and I think you will have a better setup
+on Windows. But if you want to take it further, carry on.
+
+One thing that I like about Linux is that there are many software options that
+allow you to customize key mappings. The first thing I usually change on a
+machine is to map the Caps Lock key to ESC. I have found that the software that
+works best on both Linux and Windows is [Kanata](https://github.com/jtroo/kanata). I have also used Kanata to set
+up my home row mods. Here is the full configuration for my Kanata software.
+
+
+```
+
+;; defsrc is still necessary
+
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+  caps a s d f h j k l ;
+  f5 , . spc p y
+)
+
+(defvar
+  tap-time 250
+  hold-time 250
+)
+
+(defalias
+  escctrl (tap-hold 150 200 esc (layer-toggle num) )
+  a (tap-hold $tap-time $hold-time a lmet)
+  s (tap-hold $tap-time $hold-time s lsft)
+  d (tap-hold $tap-time $hold-time d lalt)
+  f (tap-hold $tap-time $hold-time f lctl)
+
+  j (tap-hold $tap-time $hold-time j rctl)
+  k (tap-hold $tap-time $hold-time k ralt)
+  l (tap-hold $tap-time $hold-time l rsft)
+  ; (tap-hold $tap-time $hold-time ; rmet)
+  cpy S-C-c
+  pst S-ins
+  bak C-bspc
+)
+
+(deflayer base
+ @escctrl  @a @s @d @f h @j @k @l @;
+  lrld  , . spc p y
+)
+
+
+(deflayer num
+  esc @a @s @d @f @bak down up @l @;
+  f5 left rght rpt @pst @cpy
+)
+
+
+```
+
+I am aware this might be a little bit too much but honestly just read the [docs](https://github.com/jtroo/kanata/blob/main/docs/config.adoc)
+you will understand what is going on.
+
